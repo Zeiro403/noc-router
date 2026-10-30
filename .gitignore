@@ -1,28 +1,83 @@
-# Verilator
+
+# ==========================================
+# NoC Router - Git Ignore
+# ==========================================
+
+# ------------------------------------------
+# Verilator build artifacts
+# ------------------------------------------
 obj_dir/
 sim/obj_*/
+results/simulation/
 *.vcd
 *.fst
+*.vpd
+*.vcd.gz
 
-# Simulation results
-results/simulation/
+# ------------------------------------------
+# Verification and coverage results
+# ------------------------------------------
 results/coverage/
-results/physical/
+coverage.dat
+coverage.info
+*.ucd
+*.ucm
 
+# ------------------------------------------
+# Physical design outputs
+# ------------------------------------------
+results/physical/
+*.gds
+*.gdsii
+*.oas
+*.def
+
+# ------------------------------------------
 # Cadence generated files
+# ------------------------------------------
+INCA_libs/
+xcelium.d/
+xcelium.history
+xrun.history
+xrun.log
+imc.log
+innovus.log
+genus.log
+tempus.log
+
 *.log
-*.cmd
 *.history
+*.cmd
 *.db
 *.enc
-*.dat
-*.vpd
 
+# Cadence temporary and recovery files
+*.rdb
+*.rpt.old
+*.bak
+*.swp
+*.swo
+
+# ------------------------------------------
 # Python
+# ------------------------------------------
 __pycache__/
 *.pyc
 .venv/
+venv/
+.pytest_cache/
+.ruff_cache/
 
-# OS/editor
+# ------------------------------------------
+# OS and editor
+# ------------------------------------------
 .DS_Store
+Thumbs.db
 .vscode/
+.idea/
+
+# ------------------------------------------
+# Crash dumps
+# ------------------------------------------
+core
+core.*

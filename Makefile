@@ -148,12 +148,13 @@ unit:
 		echo "======================================"; \
 		echo "UNIT TEST: $$name"; \
 		echo "======================================"; \
+		mkdir -p "$(UNIT_BUILD_DIR)/obj_$$name"; \
 		$(VERILATOR) $(SIM_FLAGS) \
 			--top-module tb_$$name \
-			--Mdir $(UNIT_BUILD_DIR)/obj_$$name \
+			--Mdir "$(UNIT_BUILD_DIR)/obj_$$name" \
 			$(RTL_SRC) \
-			$(UNIT_DIR)/tb_$$name.sv; \
-		./$(UNIT_BUILD_DIR)/obj_$$name/Vtb_$$name; \
+			"$(UNIT_DIR)/tb_$$name.sv"; \
+		"./$(UNIT_BUILD_DIR)/obj_$$name/Vtb_$$name"; \
 	done; \
 	echo "ALL SELECTED UNIT TESTS PASSED"
 

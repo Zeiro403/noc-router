@@ -2,8 +2,12 @@
 
 module tb_rr_arbiter;
 
-    logic clk = 0;
-    always #5 clk = ~clk;
+    logic clk;
+
+    initial begin
+        clk = 1'b0;
+        forever #5 clk = ~clk;
+    end
 
     logic rst_n;
     logic [4:0] request;
