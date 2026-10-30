@@ -36,20 +36,43 @@ jobs:
             libfl-dev libgoogle-perftools-dev \
             zlib1g-dev
 
+
       - name: Install Verilator 5.052
+        shell: bash
         run: |
+          set -euo pipefail
+
           git clone --depth 1 \
             --branch v5.052 \
             https://github.com/verilator/verilator.git \
             /tmp/verilator
 
           cd /tmp/verilator
+
           autoconf
           ./configure --prefix=/usr/local
-          make -j 2
+
+          # Use a single build job to reduce memory pressure.
+          make -j 1 > /tmp/verilator-build.log 2>&1 || {
+            echo "Verilator build failed."
+            tail -n 100 /tmp/verilator-build.log
+            exit 1
+          }
+
           sudo make install
 
           verilator --version
+
+      
+      - name: Upload Verilator build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verilator-build-log
+          path: /tmp/verilator-build.log
+          if-no-files-found: ignore
+          retention-days: 7
+
 
       - name: RTL lint
         run: make lint-rtl
