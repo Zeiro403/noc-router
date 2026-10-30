@@ -1,0 +1,28 @@
+# Verilator
+obj_dir/
+sim/obj_*/
+*.vcd
+*.fst
+
+# Simulation results
+results/simulation/
+results/coverage/
+results/physical/
+
+# Cadence generated files
+*.log
+*.cmd
+*.history
+*.db
+*.enc
+*.dat
+*.vpd
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS/editor
+.DS_Store
+.vscode/

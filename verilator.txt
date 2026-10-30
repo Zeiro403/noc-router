@@ -1,0 +1,76 @@
+TEST FIFO
+verilator --binary --timing --assert -Wall \
+  -Wno-fatal \
+  --top-module tb_input_fifo \
+  --Mdir sim/obj_dir \
+  rtl/input_fifo.sv \
+  tb/tb_input_fifo.sv
+./sim/obj_dir/Vtb_input_fifo
+
+TEST XY ROUTER
+verilator --binary --timing --assert -Wall \
+  -Wno-fatal \
+  --top-module tb_xy_router \
+  --Mdir sim/obj_xy \
+  rtl/noc_pkg.sv \
+  rtl/xy_router.sv \
+  tb/tb_xy_router.sv
+./sim/obj_xy/Vtb_xy_router
+
+TEST RR ARBITER
+verilator --binary --timing --assert -Wall \
+  -Wno-fatal \
+  --top-module tb_rr_arbiter \
+  --Mdir sim/obj_rr \
+  rtl/rr_arbiter.sv \
+  tb/tb_rr_arbiter.sv
+./sim/obj_rr/Vtb_rr_arbiter
+
+TEST CROSSBAR
+verilator --binary --timing --assert -Wall \
+  -Wno-fatal \
+  --top-module tb_crossbar \
+  --Mdir sim/obj_crossbar \
+  rtl/crossbar.sv \
+  tb/tb_crossbar.sv
+./sim/obj_crossbar/Vtb_crossbar
+
+LINT
+verilator --lint-only -Wall -Wno-fatal \
+  --top-module noc_router \
+  rtl/noc_pkg.sv \
+  rtl/input_fifo.sv \
+  rtl/xy_router.sv \
+  rtl/rr_arbiter.sv \
+  rtl/crossbar.sv \
+  rtl/noc_router.sv
+
+INTEGRATION TEST
+verilator --binary --timing --assert -Wall \
+  -Wno-fatal \
+  --top-module tb_noc_router \
+  --Mdir results/simulation/obj_router \
+  verification/common/noc_tb_pkg.sv \
+  verification/common/noc_input_if.sv \
+  verification/common/noc_output_if.sv \
+  rtl/noc_pkg.sv \
+  rtl/input_fifo.sv \
+  rtl/xy_router.sv \
+  rtl/rr_arbiter.sv \
+  rtl/crossbar.sv \
+  rtl/noc_router.sv \
+  verification/common/noc_driver.sv \
+  verification/common/noc_monitor.sv \
+  verification/common/noc_scoreboard.sv \
+  verification/router/tb_noc_router.sv
+./results/simulation/obj_router/Vtb_noc_router
+
+TEST TB PACKAGE
+verilator --binary --timing --assert -Wall \
+  -Wno-fatal \
+  --top-module tb_noc_tb_pkg \
+  --Mdir results/simulation/obj_pkg \
+  verification/common/noc_tb_pkg.sv \
+  verification/unit/tb_noc_tb_pkg.sv
+./results/simulation/obj_pkg/Vtb_noc_tb_pkg
+
