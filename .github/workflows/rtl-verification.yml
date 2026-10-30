@@ -9,75 +9,35 @@ on:
       full_regression:
         description: "Run full pseudorandom regression"
         type: boolean
-        required: false
         default: false
       seeds:
         description: "Number of pseudorandom seeds"
         type: number
-        required: false
         default: 20
 
 jobs:
   verify:
-    name: Lint, Unit Tests and Regression
+    name: RTL Verification
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+
+    container:
+      image: verilator/verilator:latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Show tool versions
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            git make g++ python3 perl \
-            autoconf flex bison \
-            libfl-dev libgoogle-perftools-dev \
-            zlib1g-dev
-
-
-      - name: Install Verilator 5.052
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          git clone --depth 1 \
-            --branch v5.052 \
-            https://github.com/verilator/verilator.git \
-            /tmp/verilator
-
-          cd /tmp/verilator
-
-          autoconf
-          ./configure --prefix=/usr/local
-
-          # Use a single build job to reduce memory pressure.
-          make -j 1 > /tmp/verilator-build.log 2>&1 || {
-            echo "Verilator build failed."
-            tail -n 100 /tmp/verilator-build.log
-            exit 1
-          }
-
-          sudo make install
-
           verilator --version
-
-      
-      - name: Upload Verilator build log on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: verilator-build-log
-          path: /tmp/verilator-build.log
-          if-no-files-found: ignore
-          retention-days: 7
-
+          python3 --version
+          make --version
 
       - name: RTL lint
         run: make lint-rtl
 
-      - name: Verification lint
+      - name: Testbench lint
         run: make lint
 
       - name: Unit tests
@@ -88,15 +48,13 @@ jobs:
 
       - name: Full regression
         if: github.event_name == 'workflow_dispatch' && inputs.full_regression
-        run: |
-          make regression SUITE=full SEEDS=${{ inputs.seeds }}
+        run: make regression SUITE=full SEEDS=${{ inputs.seeds }}
 
-      - name: Upload simulation logs on failure
+      - name: Upload failure logs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: noc-verification-logs
-          path: |
-            results/simulation/logs/
+          path: results/simulation/logs/
           if-no-files-found: ignore
           retention-days: 7
